@@ -67,6 +67,14 @@ namespace Tron
         {
             poderes.Add(poder);
         }
+        public void EliminarItem(Item item)
+        {
+            Items.Remove(item);
+        }
+        public void EliminarPoder(Poder poder)
+        {
+            Poderes.Remove(poder);
+        }
 
         public Item ObtenerItemEnPosicion(int x, int y)
         {

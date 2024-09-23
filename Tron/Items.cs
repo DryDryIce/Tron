@@ -34,29 +34,10 @@ namespace Tron
                         moto.Estela.AgregarNodo(moto.PosX, moto.PosY);
                     }
                     break;
-                    // Agregar más ítems según sea necesario
+                case "Mina":
+                    moto.Morir();
+                    break;
             }
         }
     }
-
-    public class ColaItems
-    {
-        private Queue<Item> cola;
-
-        public ColaItems()
-        {
-            cola = new Queue<Item>();
-        }
-
-        public void AgregarItem(Item item)
-        {
-            cola.Enqueue(item);
-        }
-
-        public Item UsarItem()
-        {
-            return cola.Count > 0 ? cola.Dequeue() : null;
-        }
-    }
-
 }

@@ -10,8 +10,8 @@ namespace Tron
     {
         public string Nombre { get; set; }
         public int Duracion { get; set; }  // Duración del poder en ticks de Timer
-        public int X { get; set; }          // Posición X en el mapa
-        public int Y { get; set; }          // Posición Y en el mapa
+        public int X { get; set; }         // Posición X en el mapa
+        public int Y { get; set; }         // Posición Y en el mapa
 
         public Poder(string nombre, int duracion, int x, int y)
         {
@@ -29,31 +29,9 @@ namespace Tron
                     moto.ActivarEscudo(Duracion);
                     break;
                 case "HiperVelocidad":
-                    moto.Velocidad *= 2;
-                    // Deberías manejar cómo revertir este efecto después de la duración
+                    moto.ActivarHiperVel(Duracion);
                     break;
-                    // Agregar más poderes según sea necesario
             }
-        }
-    }
-
-    public class PilaPoderes
-    {
-        private Stack<Poder> pila;
-
-        public PilaPoderes()
-        {
-            pila = new Stack<Poder>();
-        }
-
-        public void AgregarPoder(Poder poder)
-        {
-            pila.Push(poder);
-        }
-
-        public Poder UsarPoder()
-        {
-            return pila.Count > 0 ? pila.Pop() : null;
         }
     }
 }

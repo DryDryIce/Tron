@@ -75,7 +75,7 @@ namespace Tron
         }
         private void IniciarMovimientoBots()
         {
-            // Iniciar el cambio de direcciÃ³n asÃ­ncrono para cada bot
+            // Iniciar el cambio de dirección asíncrono para cada bot
             foreach (var bot in bots)
             {
                 _ = bot.IniciarCambiosDeDireccionAsync();
@@ -189,7 +189,7 @@ namespace Tron
         private async void InicializarBots()
         {
             bots = new List<Bot>();
-            // Crear varios bots y aÃ±adirlos a la lista
+            // Crear varios bots y añadirlos a la lista
             bots.Add(new Bot(18, 13));
             bots.Add(new Bot(34, 13));
             bots.Add(new Bot(18, 29));
@@ -210,13 +210,13 @@ namespace Tron
 
             ActualizarTextBoxes();
 
-            jugador.MoverMoto(mapa, GameScreen.Width, GameScreen.Height);  // Mover la moto del jugador en la direcciÃ³n actual
+            jugador.MoverMoto(mapa, GameScreen.Width, GameScreen.Height);  // Mover la moto del jugador en la dirección actual
 
             foreach (var bot in bots)  // Mover los bots
             {
-                bot.MoverAutomÃ¡ticamente(mapa, GameScreen.Width, GameScreen.Height);
+                bot.MoverAutomáticamente(mapa, GameScreen.Width, GameScreen.Height);
 
-                // Verificar colisiÃ³n entre el jugador y el bot
+                // Verificar colisión entre el jugador y el bot
                 if (jugador.PosX == bot.PosX && jugador.PosY == bot.PosY && jugador.EscudoActivo == false)
                 {
                     jugador.Morir();
@@ -224,7 +224,7 @@ namespace Tron
                     juegoIniciado = false;
                 }
 
-                // Verificar colisiÃ³n entre los bots (opcional)
+                // Verificar colisión entre los bots (opcional)
                 foreach (var otroBot in bots)
                 {
                     if (bot != otroBot && bot.PosX == otroBot.PosX && bot.PosY == otroBot.PosY)
@@ -234,7 +234,7 @@ namespace Tron
                     }
                 }
             }
-            // Actualizar la interfaz grÃ¡fica para reflejar el nuevo estado del juego
+            // Actualizar la interfaz gráfica para reflejar el nuevo estado del juego
             ActualizarInterfaz();
         }
 
@@ -267,7 +267,7 @@ namespace Tron
                     g.FillRectangle(Brushes.Yellow, poder.X * anchoNodo, poder.Y * altoNodo, anchoNodo, altoNodo);
                 }
 
-                // Dibujar la moto como un rectÃ¡ngulo
+                // Dibujar la moto como un rectángulo
                 if (jugador.Viva)
                 {
                     if (jugador.EscudoActivo == false)
@@ -302,7 +302,7 @@ namespace Tron
                     juegoIniciado = false;
                 }
 
-                // Dibujar los bots si estÃ¡n vivos
+                // Dibujar los bots si están vivos
                 foreach (var bot in bots)
                 {
                     if (bot.Viva)
@@ -328,7 +328,7 @@ namespace Tron
         }
         private bool TodosLosBotsMuertos()
         {
-            // Verificar si todos los bots estÃ¡n muertos
+            // Verificar si todos los bots están muertos
             return bots.All(bot => !bot.Viva);
         }
         private void button1_Click(object sender, EventArgs e)
@@ -342,4 +342,3 @@ namespace Tron
         }
     }
 }
-
