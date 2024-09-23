@@ -9,7 +9,7 @@ namespace Tron
     public class Item
     {
         public string Nombre { get; set; }
-        public int Efecto { get; set; }  // Valor del efecto (por ejemplo, cantidad de combustible o crecimiento de la estela)
+        public int Efecto { get; set; }  // Valor del efecto 
         public int X { get; set; }
         public int Y { get; set; }
 
@@ -26,16 +26,16 @@ namespace Tron
             switch (Nombre)
             {
                 case "Combustible":
-                    moto.Combustible = Math.Min(100, moto.Combustible + Efecto);
+                    moto.Combustible = Math.Min(100, moto.Combustible + Efecto); // Adiciona al combustible existente 
                     break;
                 case "Crecimiento":
                     for (int i = 0; i < Efecto; i++)
                     {
-                        moto.Estela.AgregarNodo(moto.PosX, moto.PosY);
+                        moto.Estela.AgregarNodo(moto.PosX, moto.PosY); // Agrega nodo a la estela dependiendo del valor ingresado
                     }
                     break;
                 case "Mina":
-                    moto.Morir();
+                    moto.Morir(); // Muerte por mina
                     break;
             }
         }

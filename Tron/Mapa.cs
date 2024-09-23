@@ -14,8 +14,6 @@ namespace Tron
         public NodoMapa Sur { get; set; }
         public NodoMapa Este { get; set; }
         public NodoMapa Oeste { get; set; }
-
-        // Otros atributos y métodos
     }
 
     public class Mapa
@@ -75,7 +73,7 @@ namespace Tron
         {
             Poderes.Remove(poder);
         }
-
+        // Compara posiciones con las motos y con los items o poderes
         public Item ObtenerItemEnPosicion(int x, int y)
         {
             return items.FirstOrDefault(item => item.X == x && item.Y == y);

@@ -16,6 +16,7 @@ namespace Tron
 
     public class Moto
     {
+        // Atributos principales
         public int PosX { get; private set; }
         public int PosY { get; private set; }
         public int Velocidad { get; set; }  
@@ -42,14 +43,14 @@ namespace Tron
             PoderesTemp = new Stack<Poder>();
 
             EscudoActivo = false;
-            Viva = true;  // Inicialmente la moto está viva
+            Viva = true;
 
             // Estela inicial
             Estela.AgregarNodo(PosX - 1, PosY);
             Estela.AgregarNodo(PosX - 2, PosY);
         }
-
-        public void UsarItem()
+        
+        public void UsarItem() // Remueve el Item de la cola y lo utiliza
         {
             if (Items.Count > 0)
             {
@@ -58,7 +59,7 @@ namespace Tron
             }
         }
 
-        public void UsarPoder()
+        public void UsarPoder() // Remueve el Poder de la pila o Stack y lo utiliza
         {
             if (Poderes.Count > 0)
             {
@@ -66,16 +67,16 @@ namespace Tron
                 poder.AplicarEfectoTemporal(this);
             }
         }
-        public void RecogerItem(Item item)
+        public void RecogerItem(Item item) // Agrega a la cola
         {
             Items.Enqueue(item);
         }
 
-        public void RecogerPoder(Poder poder)
+        public void RecogerPoder(Poder poder) // Agrega a la pila o Stack
         {
             Poderes.Push(poder);
         }
-        public async void ActivarEscudo(int duracion)
+        public async void ActivarEscudo(int duracion) // Activa y desactiva el Escudo
         {
             EscudoActivo = true;
             await Task.Delay(duracion * 1000); // Espera en segundos
@@ -84,7 +85,7 @@ namespace Tron
         public async void ActivarHiperVel(int duracion)
         {
             Velocidad = 4;
-            await Task.Delay(duracion * 1000);
+            await Task.Delay(duracion * 1000); // Causa Hipervelocidad por un tiempo
             Velocidad = 1;
         }
         public void MoverMoto(Mapa mapa, int anchoPictureBox, int altoPictureBox)
@@ -95,7 +96,7 @@ namespace Tron
             int nuevaPosX = PosX;
             int nuevaPosY = PosY;
 
-            switch (DireccionActual)
+            switch (DireccionActual) // Switch de direccion interno del jugador
             {
                 case Direccion.Arriba:
                     nuevaPosY -= Velocidad;
@@ -119,7 +120,7 @@ namespace Tron
             }
 
             // Verificar si la nueva posición está dentro de los límites del mapa
-            if (nuevaPosX >= 0 && nuevaPosX < anchoPictureBox / 10 && nuevaPosY >= 0 && nuevaPosY < altoPictureBox / 10)
+            if (nuevaPosX >= 0 && nuevaPosX < anchoPictureBox / 20 && nuevaPosY >= 0 && nuevaPosY < altoPictureBox / 20)
             {
                 Estela.MoverEstela(PosX, PosY);
                 PosX = nuevaPosX;
@@ -173,7 +174,7 @@ namespace Tron
 
 
     }
-    public class Bot : Moto
+    public class Bot : Moto // Hereda los atributos de la clase Moto
     {
         private Random random;
 
@@ -183,7 +184,7 @@ namespace Tron
         }
         public async Task IniciarCambiosDeDireccionAsync()
         {
-            while (Viva) // Bucle infinito
+            while (Viva) // Bucle infinito mientras este vivo
             {
                 CambiarDireccion();
                 await Task.Delay(800); 
@@ -191,7 +192,7 @@ namespace Tron
         }
         public void MoverAutomáticamente(Mapa mapa, int anchoPictureBox, int altoPictureBox)
         {
-            // Mover la moto en la dirección actual, pasando el mapa y las dimensiones del PictureBox
+            // Mover la moto en la dirección actual, pasando el mapa y las dimensiones del pictureBox
             base.MoverMoto(mapa, anchoPictureBox, altoPictureBox);
 
             // Verificar si hay ítems o poderes en la nueva posición y usarlos

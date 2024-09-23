@@ -24,7 +24,7 @@ namespace Tron
     {
         public NodoEstela Cabeza { get; private set; }
 
-        public void AgregarNodo(int x, int y)
+        public void AgregarNodo(int x, int y) // Metodo de adicion de estelas
         {
             NodoEstela nuevoNodo = new NodoEstela(x, y);
             if (Cabeza == null)
@@ -42,7 +42,7 @@ namespace Tron
             }
         }
 
-        public void MoverEstela(int nuevaPosX, int nuevaPosY)
+        public void MoverEstela(int nuevaPosX, int nuevaPosY) // Cambia la posicion de la estela segun la posicion pasada de la moto
         {
             if (Cabeza != null)
             {

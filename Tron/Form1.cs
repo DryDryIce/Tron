@@ -26,33 +26,31 @@ namespace Tron
 
             ActualizarTextBoxes();
 
-
+            // Inicializacion de Poderes
             Random random = new Random();
-            int xEscudo = random.Next(0, 52);
-            int yEscudo = random.Next(0, 42);
-            int timeEscudo = random.Next(0, 4);
+            int xEscudo = random.Next(0, 52); // Coordenadas Random
+            int yEscudo = random.Next(0, 42); // Coordenadas Random
+            int timeEscudo = random.Next(0, 4); // Duracion
             Poder escudo = new Poder("Escudo", timeEscudo, xEscudo, yEscudo);
-
             int xHiperVel = random.Next(0, 52);
             int yHiperVel = random.Next(0, 42);
             int timeHiperVel = random.Next(0, 4);
             Poder hipervel = new Poder("HiperVelocidad", timeHiperVel, xHiperVel, yHiperVel);
-
             int xCombustible = random.Next(0, 52);
             int yCombustible = random.Next(0, 42);
             int addCombustible = random.Next(0, 99);
             Item combustible = new Item("Combustible", addCombustible, xCombustible, yCombustible);
-
+            // Inicializacion de Items
             int xCrecimiento = random.Next(0, 52);
             int yCrecimiento = random.Next(0, 42);
-            int addCrecimiento = random.Next(0, 10);
+            int addCrecimiento = random.Next(0, 10); // Valor de efecto
             Item crecimiento = new Item("Crecimiento", addCrecimiento, xCrecimiento, yCrecimiento);
-
             int xMina = random.Next(0, 52);
             int yMina = random.Next(0, 42);
             int addMina = random.Next(0, 10);
             Item mina = new Item("Mina", addMina, xMina, yMina);
 
+            // Colocarlos dentro del mapa y meterlos en la lista del mismo
             mapa.ColocarPoder(escudo);
             mapa.ColocarPoder(hipervel);
 
@@ -62,7 +60,7 @@ namespace Tron
 
             ConfigurarTimer();
         }
-        private void GameScreen_Click(object sender, EventArgs e)
+        private void GameScreen_Click(object sender, EventArgs e) // Inicio de juego mediante click en la pictureBox
         {
             if (!juegoIniciado)
             {
@@ -118,7 +116,7 @@ namespace Tron
             if (jugador.Poderes.Count > 0)
             {
                 Poder primerPoder = jugador.Poderes.Peek();
-                MostrarSeleccion.Text = primerPoder.Nombre;  // Asumiendo que 'Poder' tiene una propiedad 'Nombre'
+                MostrarSeleccion.Text = primerPoder.Nombre; 
             }
             else
             {
@@ -199,7 +197,7 @@ namespace Tron
         private void ConfigurarTimer()
         {
             timer = new System.Windows.Forms.Timer();
-            timer.Interval = 80;
+            timer.Interval = 80; // Temporizador en milisegundos
             timer.Tick += Timer_Tick;
             timer.Start();
         }
@@ -224,7 +222,7 @@ namespace Tron
                     juegoIniciado = false;
                 }
 
-                // Verificar colisión entre los bots (opcional)
+                // Verificar colisión entre los bots 
                 foreach (var otroBot in bots)
                 {
                     if (bot != otroBot && bot.PosX == otroBot.PosX && bot.PosY == otroBot.PosY)
