@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Tron
@@ -8,122 +9,237 @@ namespace Tron
         private Moto jugador;
         private Mapa mapa;
         private List<Bot> bots;
-        private System.Windows.Forms.Timer timer;  // Explicitly specify the correct Timer
-
+        private System.Windows.Forms.Timer timer;
+        private bool juegoIniciado = false;
 
         public Form1()
         {
             InitializeComponent();
-            this.KeyPreview = true;
-            GameScreen.PreviewKeyDown += new PreviewKeyDownEventHandler(GameScreen_PreviewKeyDown);
+            GameScreen.Click += GameScreen_Click;
+            GameScreen.TabStop = true;
+            GameScreen.Focus();
+            GameScreen.PreviewKeyDown += GameScreen_PreviewKeyDown;
             GameScreen.SizeMode = PictureBoxSizeMode.AutoSize;
-            mapa = new Mapa(104,87);
-            jugador = new Moto(52, 43); // Initial position of the moto 
-            InicializarBots(); // Crear e inicializar bots // Configurar y empezar el temporizador para mover la moto y bots
-            Poder escudo = new Poder("Escudo", 10, 5, 5);
-            mapa.ColocarPoder(escudo);
-            ConfigurarTimer(); // Set up and start the timer to move the moto
-            this.Focus();
-        }
-        private async void InicializarBots()
-        {
-            bots = new List<Bot>();
-            // Crear varios bots y a�adirlos a la lista
-            bots.Add(new Bot(20, 20));
-            bots.Add(new Bot(84, 67));
-            bots.Add(new Bot(20, 67));
-            bots.Add(new Bot(84, 20));
+            mapa = new Mapa(52, 43);
+            jugador = new Moto(26, 21);
+            InicializarBots();
 
-            // Iniciar el cambio de direcci�n as�ncrono para cada bot
+            ActualizarTextBoxes();
+
+
+            Random random = new Random();
+            int xEscudo = random.Next(0, 52);
+            int yEscudo = random.Next(0, 42);
+            int timeEscudo = random.Next(0, 4);
+            Poder escudo = new Poder("Escudo", timeEscudo, xEscudo, yEscudo);
+
+            int xHiperVel = random.Next(0, 52);
+            int yHiperVel = random.Next(0, 42);
+            int timeHiperVel = random.Next(0, 4);
+            Poder hipervel = new Poder("HiperVelocidad", timeHiperVel, xHiperVel, yHiperVel);
+
+            int xCombustible = random.Next(0, 52);
+            int yCombustible = random.Next(0, 42);
+            int addCombustible = random.Next(0, 99);
+            Item combustible = new Item("Combustible", addCombustible, xCombustible, yCombustible);
+
+            int xCrecimiento = random.Next(0, 52);
+            int yCrecimiento = random.Next(0, 42);
+            int addCrecimiento = random.Next(0, 10);
+            Item crecimiento = new Item("Crecimiento", addCrecimiento, xCrecimiento, yCrecimiento);
+
+            int xMina = random.Next(0, 52);
+            int yMina = random.Next(0, 42);
+            int addMina = random.Next(0, 10);
+            Item mina = new Item("Mina", addMina, xMina, yMina);
+
+            mapa.ColocarPoder(escudo);
+            mapa.ColocarPoder(hipervel);
+
+            mapa.ColocarItem(combustible);
+            mapa.ColocarItem(crecimiento);
+            mapa.ColocarItem(mina);
+
+            ConfigurarTimer();
+        }
+        private void GameScreen_Click(object sender, EventArgs e)
+        {
+            if (!juegoIniciado)
+            {
+                juegoIniciado = true;
+                GameScreen.Focus();
+                timer.Start();  // Iniciar el temporizador para que comience el juego
+                IniciarMovimientoBots();
+            }
+
+        }
+        private void IniciarMovimientoBots()
+        {
+            // Iniciar el cambio de dirección asíncrono para cada bot
             foreach (var bot in bots)
             {
                 _ = bot.IniciarCambiosDeDireccionAsync();
             }
         }
-        private void GameScreen_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        private void ActualizarTextBoxes()
         {
+            // Actualizar el TextBox del Combustible
+            MostrarCombustible.Text = jugador.Combustible.ToString();
+
+            // Actualizar el TextBox de los Poderes
+            if (jugador.Poderes.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var poder in jugador.Poderes)
+                {
+                    sb.AppendLine(poder.Nombre);  // Suponiendo que 'Poder' tiene una propiedad 'Nombre'
+                }
+                MostrarPoderes.Text = sb.ToString();
+            }
+            else
+            {
+                MostrarPoderes.Text = "Vacio";
+            }
+            if (jugador.PoderesTemp.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var poder in jugador.PoderesTemp)
+                {
+                    sb.AppendLine(poder.Nombre);
+                }
+                MostrarPoderesTemp.Text = sb.ToString();
+            }
+            else
+            {
+                MostrarPoderesTemp.Text = "Vacio";
+            }
+
+            // Actualizar el TextBox del Primer Poder
+            if (jugador.Poderes.Count > 0)
+            {
+                Poder primerPoder = jugador.Poderes.Peek();
+                MostrarSeleccion.Text = primerPoder.Nombre;  // Asumiendo que 'Poder' tiene una propiedad 'Nombre'
+            }
+            else
+            {
+                MostrarSeleccion.Text = "No Seleccionado";
+            }
+        }
+        private async void GameScreen_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Left:
+                case Keys.Right:
+                case Keys.Space:
+                case Keys.Z:
+                case Keys.X:
+                    e.IsInputKey = true;  // Marca estas teclas como teclas de entrada
+                    break;
+            }
+            Poder temp;
             switch (e.KeyCode)
             {
                 case Keys.Up:
                     if (jugador.DireccionActual != Direccion.Abajo)
+                    {
                         jugador.DireccionActual = Direccion.Arriba;
+                    }
                     break;
                 case Keys.Down:
                     if (jugador.DireccionActual != Direccion.Arriba)
+                    {
                         jugador.DireccionActual = Direccion.Abajo;
+                    }
                     break;
                 case Keys.Left:
                     if (jugador.DireccionActual != Direccion.Derecha)
+                    {
                         jugador.DireccionActual = Direccion.Izquierda;
+                    }
                     break;
                 case Keys.Right:
                     if (jugador.DireccionActual != Direccion.Izquierda)
+                    {
                         jugador.DireccionActual = Direccion.Derecha;
+                    }
+                    break;
+                case Keys.Space:
+                    jugador.UsarPoder();
+                    break;
+                case Keys.Z:
+                    if (jugador.Poderes.Count > 0)  // Verificar si hay poderes en la pila
+                    {
+                        temp = jugador.Poderes.Pop();
+                        jugador.PoderesTemp.Push(temp);  // Mover el poder a la pila temporal
+                    }
+                    break;
+
+                case Keys.X:
+                    if (jugador.PoderesTemp.Count > 0)  // Verificar si hay poderes en la pila temporal
+                    {
+                        temp = jugador.PoderesTemp.Pop();
+                        jugador.Poderes.Push(temp);  // Mover el poder de vuelta a la pila original
+                    }
                     break;
             }
         }
-
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        private async void InicializarBots()
         {
-            switch (e.KeyCode)
-            {
-                case Keys.Up:
-                    if (jugador.DireccionActual != Direccion.Abajo) // Evita que se mueva en la direcci�n opuesta
-                        jugador.DireccionActual = Direccion.Arriba;
-                    break;
-                case Keys.Down:
-                    if (jugador.DireccionActual != Direccion.Arriba)
-                        jugador.DireccionActual = Direccion.Abajo;
-                    break;
-                case Keys.Left:
-                    if (jugador.DireccionActual != Direccion.Derecha)
-                        jugador.DireccionActual = Direccion.Izquierda;
-                    break;
-                case Keys.Right:
-                    if (jugador.DireccionActual != Direccion.Izquierda)
-                        jugador.DireccionActual = Direccion.Derecha;
-                    break;
-            }
+            bots = new List<Bot>();
+            // Crear varios bots y añadirlos a la lista
+            bots.Add(new Bot(18, 13));
+            bots.Add(new Bot(34, 13));
+            bots.Add(new Bot(18, 29));
+            bots.Add(new Bot(34, 29));
+
         }
         private void ConfigurarTimer()
         {
-            timer = new System.Windows.Forms.Timer();  // Explicitly specify the correct Timer
-            timer.Interval = 100; // Interval in milliseconds (adjust as needed)
+            timer = new System.Windows.Forms.Timer();
+            timer.Interval = 80;
             timer.Tick += Timer_Tick;
             timer.Start();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            jugador.MoverMoto(mapa, GameScreen.Width, GameScreen.Height);
+            if (!juegoIniciado) return;
 
-            foreach (var bot in bots)
+            ActualizarTextBoxes();
+
+            jugador.MoverMoto(mapa, GameScreen.Width, GameScreen.Height);  // Mover la moto del jugador en la dirección actual
+
+            foreach (var bot in bots)  // Mover los bots
             {
-                bot.MoverAutom�ticamente(mapa, GameScreen.Width, GameScreen.Height);
+                bot.MoverAutomáticamente(mapa, GameScreen.Width, GameScreen.Height);
 
-                // Verificar colisi�n entre el jugador y el bot
-                if (jugador.PosX == bot.PosX && jugador.PosY == bot.PosY)
+                // Verificar colisión entre el jugador y el bot
+                if (jugador.PosX == bot.PosX && jugador.PosY == bot.PosY && jugador.EscudoActivo == false)
                 {
                     jugador.Morir();
                     bot.Morir();
+                    juegoIniciado = false;
                 }
 
-                // Verificar si el bot colisiona con otro bot (opcional)
+                // Verificar colisión entre los bots (opcional)
                 foreach (var otroBot in bots)
                 {
                     if (bot != otroBot && bot.PosX == otroBot.PosX && bot.PosY == otroBot.PosY)
                     {
-                        bot.Morir();
-                        otroBot.Morir();
+                        bot.MorirBot(mapa);
+                        otroBot.MorirBot(mapa);
                     }
                 }
             }
-            ActualizarInterfaz(); // Update the graphical interface with the new position
+            // Actualizar la interfaz gráfica para reflejar el nuevo estado del juego
+            ActualizarInterfaz();
         }
 
         private void ActualizarInterfaz()
         {
-            // Crear un Bitmap del mismo tama�o que el PictureBox
             Bitmap mapaBitmap = new Bitmap(GameScreen.Width, GameScreen.Height);
 
             using (Graphics g = Graphics.FromImage(mapaBitmap))
@@ -150,20 +266,43 @@ namespace Tron
                 {
                     g.FillRectangle(Brushes.Yellow, poder.X * anchoNodo, poder.Y * altoNodo, anchoNodo, altoNodo);
                 }
-                // Dibujar la moto como un rect�ngulo
+
+                // Dibujar la moto como un rectángulo
                 if (jugador.Viva)
                 {
-                    g.FillRectangle(Brushes.Purple, jugador.PosX * anchoNodo, jugador.PosY * altoNodo, anchoNodo, altoNodo);
-                    // Dibujar la estela del jugador
-                    NodoEstela actual = jugador.Estela.Cabeza;
-                    while (actual != null)
+                    if (jugador.EscudoActivo == false)
                     {
-                        g.FillRectangle(Brushes.MediumPurple, actual.PosX * anchoNodo, actual.PosY * altoNodo, anchoNodo, altoNodo);
-                        actual = actual.Siguiente;
+                        g.FillRectangle(Brushes.Purple, jugador.PosX * anchoNodo, jugador.PosY * altoNodo, anchoNodo, altoNodo);
+                        // Dibujar la estela del jugador
+                        NodoEstela actual = jugador.Estela.Cabeza;
+                        while (actual != null)
+                        {
+                            g.FillRectangle(Brushes.MediumPurple, actual.PosX * anchoNodo, actual.PosY * altoNodo, anchoNodo, altoNodo);
+                            actual = actual.Siguiente;
+                        }
+                    }
+                    if (jugador.EscudoActivo == true)
+                    {
+                        g.FillRectangle(Brushes.DarkBlue, jugador.PosX * anchoNodo, jugador.PosY * altoNodo, anchoNodo, altoNodo);
+                        // Dibujar la estela del jugador
+                        NodoEstela actual = jugador.Estela.Cabeza;
+                        while (actual != null)
+                        {
+                            g.FillRectangle(Brushes.Blue, actual.PosX * anchoNodo, actual.PosY * altoNodo, anchoNodo, altoNodo);
+                            actual = actual.Siguiente;
+                        }
                     }
                 }
+                if (jugador.Viva == false)
+                {
+                    juegoIniciado = false;
+                }
+                if (TodosLosBotsMuertos())
+                {
+                    juegoIniciado = false;
+                }
 
-                // Dibujar los bots si est�n vivos
+                // Dibujar los bots si están vivos
                 foreach (var bot in bots)
                 {
                     if (bot.Viva)
@@ -184,15 +323,23 @@ namespace Tron
             {
                 GameScreen.Image.Dispose(); // Libera el bitmap anterior
             }
-            GameScreen.Image = mapaBitmap;
             // Asignar el Bitmap dibujado al PictureBox
             GameScreen.Image = mapaBitmap;
         }
-
-
+        private bool TodosLosBotsMuertos()
+        {
+            // Verificar si todos los bots están muertos
+            return bots.All(bot => !bot.Viva);
+        }
         private void button1_Click(object sender, EventArgs e)
+        {
+            juegoIniciado = false;
+        }
+
+        private void MostrarCombustible_TextChanged(object sender, EventArgs e)
         {
 
         }
     }
 }
+
